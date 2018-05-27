@@ -5,11 +5,16 @@ import {Tracker} from 'meteor/tracker';
 
 import {Players} from './../imports/api/players';
 
-const renderPlayers = (playersList) => {
-    return playersList.map((player) => {
-        return <p key={player._id}>{player.name} has {player.score} point(s).</p>;
-    });
-};
+const renderPlayers = (playersList) => playersList.map((player) => (
+    <p key={player._id}>
+        {player.name} has {player.score} point(s).
+        <button onClick={()=>handleRemove(event,player._id)}>X</button>
+    </p>
+));
+
+const handleRemove = (event, playerId) => {
+    Players.remove(playerId);
+}
 
 const handleSubmit = (e) => {
     let playerName = e.target.playerName.value;
@@ -17,7 +22,7 @@ const handleSubmit = (e) => {
     
     if (playerName) {
         e.target.playerName.value = '';
-        Players.insert({name: playerName, score: 1000});
+        Players.insert({name: playerName, score: 0});
     }
 };
 
