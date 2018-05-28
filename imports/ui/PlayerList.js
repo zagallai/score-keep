@@ -11,8 +11,8 @@ export default class PlayerList extends React.Component {
             });    
          } else {
              return (
-                <div>
-                    <h4>Please add a player...</h4>
+                <div className="item">
+                    <p className="item__message">Please add your first player...</p>
                 </div>
              );
          }
