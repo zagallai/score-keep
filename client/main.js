@@ -4,41 +4,40 @@ import {Meteor} from 'meteor/meteor';
 import {Tracker} from 'meteor/tracker';
 
 import {Players} from './../imports/api/players';
+import TitleBar from './../imports/ui/TitleBar';
+import AddPlayer from './../imports/ui/AddPlayer';
 
 const renderPlayers = (playersList) => playersList.map((player) => (
     <p key={player._id}>
         {player.name} has {player.score} point(s).
-        <button onClick={()=>handleRemove(event,player._id)}>X</button>
+        <button onClick={()=>handleAdd(event, player._id)}>+1</button>
+        <button onClick={()=>handleSub(event, player._id)}>-1</button>
+        <button onClick={()=>handleRemove(event, player._id)}>X</button>
     </p>
 ));
+
+const handleAdd = (event, playerId) => {
+    Players.update(playerId, {$inc: {score: 1}});
+}
+
+const handleSub = (event, playerId) => {
+    Players.update(playerId, {$inc: {score: -1}});
+}
 
 const handleRemove = (event, playerId) => {
     Players.remove(playerId);
 }
 
-const handleSubmit = (e) => {
-    let playerName = e.target.playerName.value;
-    e.preventDefault();
-    
-    if (playerName) {
-        e.target.playerName.value = '';
-        Players.insert({name: playerName, score: 0});
-    }
-};
-
 Meteor.startup(() => {
     Tracker.autorun(() => {
         let players = Players.find().fetch();
 
-        let title = 'Score Keep';
+        let title = 'Score Keep App';
         let jsx = (
             <div>
-                <h1>{title}</h1>
+                <TitleBar title={title}/>
                 {renderPlayers(players)}
-                <form onSubmit={handleSubmit}>
-                    <input name="playerName" placeholder="Player Name" />
-                    <button>Add Player</button>
-                </form>
+                <AddPlayer score={50}/>
             </div>
         );
         ReactDOM.render(jsx, document.getElementById('app'));    
